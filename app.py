@@ -7,16 +7,16 @@ import streamlit as st
 # ----------------------------
 # Cấu hình trang
 # ----------------------------
-st.set_page_config(page_title="Ứng dụng đánh giá nhanh", layout="wide")
-st.title("Ứng dụng đánh giá nhanh — Morse • GCS • Braden • VIP")
-st.markdown("Chỉ **tính toán và hiển thị kết quả**, không lưu dữ liệu. Sử dụng nhanh tại giường hoặc trên máy tính/điện thoại.")
+st.set_page_config(page_title="Công cụ đánh giá cho điều dưỡng", layout="wide")
+st.title("Công cụ đánh giá cho điều dưỡng")
+st.markdown("Công cụ này chỉ **tính toán và hiển thị kết quả**, không lưu dữ liệu. Sử dụng nhanh tại giường được xây dựng bởi **TS.ĐD Lê Quốc Dũng** Khoa Điều dưỡng  - KTYH, Trường Cao đẳng Y tế Đồng Tháp.")
 
 st.sidebar.header("Tùy chọn")
 show_details = st.sidebar.checkbox("Hiện chi tiết từng tiêu chí", value=True)
 st.sidebar.caption("Phiên bản: 1.3 — Không lưu, không gửi dữ liệu.")
 
 # Tabs cho từng thang đánh giá
-tabs = st.tabs(["Morse (Nguy cơ té ngã)", "GCS (Trạng thái ý thức)", "Braden (Nguy cơ loét tỳ)", "VIP (Viêm tiêm truyền)"])
+tabs = st.tabs(["Nguy cơ té ngã (Morse)", "Đánh giá hôn mê (Glasgow)", "Nguy cơ loét tỳ (Braden)", "Viêm tĩnh mạch (VIP)"])
 
 # ----------------------------
 # Khởi tạo mặc định các biến tránh NameError
@@ -39,26 +39,24 @@ vip_action = "Chưa tính"
 # 1) Morse Fall Scale
 # ----------------------------
 with tabs[0]:
-    st.header("Morse Fall Scale (Nguy cơ té ngã)")
-    st.markdown("Chọn các mục phù hợp với bệnh nhân:")
+    st.header("Nguy cơ té ngã (Morse)")
+    st.markdown("Chọn các mục phù hợp với người bệnh:")
 
     with st.form("morse_form"):
         col1, col2 = st.columns(2)
         with col1:
             morse_q1 = st.radio("1. Tiền sử té ngã", ("Không", "Có — té ngã trong 3 tháng"))
-            morse_q2 = st.radio("2. Chẩn đoán phụ (≥2 bệnh?)", ("Không", "Có — ≥2 bệnh"))
+            morse_q2 = st.radio("2. Chẩn đoán phụ (≥2 bệnh?)hoặc dùng thuốc hạ HA, gây nghiện", ("Không", "Có"))
             morse_q3 = st.selectbox("3. Dụng cụ hỗ trợ đi lại",
-                                    ("Không / nằm nghỉ / điều dưỡng hỗ trợ",
-                                     "Nạng / gậy / khung tập đi",
-                                     "Bám / tựa vào đồ đạc / xe lăn"))
+                                    ("Không / nằm nghỉ",
+                                     "Xe lăn/ Nạng / gậy / khung tập đi",
+                                     "Bám / tựa vào bàn ghế / bờ tường để đi"))
         with col2:
-            morse_q4 = st.radio("4. Truyền dịch / thuốc tĩnh mạch", ("Không", "Có"))
+            morse_q4 = st.radio("4. Đang truyền dịch / thuốc tĩnh mạch", ("Không", "Có"))
             morse_q5 = st.selectbox("5. Dáng đi / cách di chuyển",
                                     ("Bình thường / nằm nghỉ / bất động", "Yếu", "Khó khăn / loạng choạng"))
-            morse_q6 = st.radio("6. Tình trạng tâm thần", ("Đánh giá đúng khả năng", "Quên giới hạn của bản thân"))
-        extra_ah = st.checkbox("Bệnh nhân đang dùng thuốc hạ huyết áp (+10 điểm)?", value=False)
-        morse_submitted = st.form_submit_button("Tính Morse")
-
+            morse_q6 = st.radio("6. Tình trạng tinh thần", ("Định hướng được bản thân", "Quên, lú lẫn"))
+        morse_submitted = st.form_submit_button("Tính điểm Morse")
     if morse_submitted:
         morse_score = 0
         morse_details = []
@@ -74,13 +72,11 @@ with tabs[0]:
         if morse_q5.startswith("Bình thường"): morse_score += 0; morse_details.append(("Dáng đi",0))
         elif morse_q5.startswith("Yếu"): morse_score += 10; morse_details.append(("Dáng đi",10))
         else: morse_score += 20; morse_details.append(("Dáng đi",20))
-        if morse_q6.startswith("Quên"): morse_score += 15; morse_details.append(("Tâm thần",15))
+        if morse_q6.startswith("Quên"): morse_score += 15; morse_details.append(("Tinh thần",15))
         else: morse_details.append(("Tâm thần",0))
-        if extra_ah: morse_score += 10; morse_details.append(("Modifier: Thuốc hạ huyết áp",10))
-
-        if morse_score >= 45: morse_risk = "Nguy cơ cao"
-        elif morse_score >= 25: morse_risk = "Nguy cơ trung bình"
-        else: morse_risk = "Nguy cơ thấp"
+        if morse_score >= 45: morse_risk = "Nguy cơ té ngã cao"
+        elif morse_score >= 25: morse_risk = "Nguy cơ té ngã trung bình"
+        else: morse_risk = "Nguy cơ té ngã thấp"
 
     st.subheader("Kết quả Morse")
     st.metric("Tổng điểm Morse", morse_score)
@@ -93,13 +89,13 @@ with tabs[0]:
 # 2) Glasgow Coma Scale (GCS)
 # ----------------------------
 with tabs[1]:
-    st.header("Glasgow Coma Scale (GCS)")
-    st.markdown("Nhập điểm từng phần (E = Mở mắt, V = Ngôn ngữ, M = Vận động). Tổng 3–15.")
+    st.header("Đánh giá hôn mê (Glasgow)")
+    st.markdown("Nhập điểm từng phần (E = Mở mắt, V = Lời nói, M = Vận động). Tổng 3–15.")
 
     with st.form("gcs_form"):
         gcs_e = st.selectbox("Mở mắt (E)", options=[4,3,2,1],
                              format_func=lambda x: f"{x} — " + {4:"Tự mở mắt",3:"Mở khi gọi",2:"Mở khi đau",1:"Không mở"}[x])
-        gcs_v = st.selectbox("Ngôn ngữ (V)", options=[5,4,3,2,1],
+        gcs_v = st.selectbox("Lời nói (V)", options=[5,4,3,2,1],
                              format_func=lambda x: f"{x} — " + {5:"Bình thường",4:"Lẫn lộn",3:"Nói không phù hợp",2:"Âm thanh không hiểu",1:"Không nói"}[x])
         gcs_m = st.selectbox("Vận động (M)", options=[6,5,4,3,2,1],
                              format_func=lambda x: f"{x} — " + {6:"Làm theo mệnh lệnh",5:"Định vị đau",4:"Rút khi đau",3:"Gập bất thường",2:"Duỗi",1:"Không vận động"}[x])
@@ -107,9 +103,11 @@ with tabs[1]:
 
     if gcs_sub:
         gcs_total = gcs_e + gcs_v + gcs_m
-        if gcs_total <= 8: gcs_category = "Nặng (thường hôn mê) — GCS ≤ 8"
-        elif 9 <= gcs_total <= 12: gcs_category = "Trung bình — GCS 9–12"
-        else: gcs_category = "Nhẹ — GCS ≥ 13"
+        if gcs_total <= 3: gcs_category = "Hôn mê rất sâu — GCS ≤ 3"
+        elif 4<=gcs_total <= 8: gcs_category = "Rối loạn ý thức nặng (Hôn mê sâu) — GCS ≤ 8"
+        elif 9 <= gcs_total <= 12: gcs_category = "Rối loạn ý thức trung bình — GCS 9–12"
+        elif 13 <= gcs_total <= 14: gcs_category = "Rối loạn ý thức nhẹ — GCS 9–12"
+        else: gcs_category = "Bình thường — GCS = 15"
 
     st.subheader("Kết quả GCS")
     st.write(f"Điểm: **{gcs_total}**  (E{gcs_e} V{gcs_v} M{gcs_m})")
@@ -119,12 +117,12 @@ with tabs[1]:
 # 3) Braden Scale
 # ----------------------------
 with tabs[2]:
-    st.header("Braden Scale (Nguy cơ loét tỳ)")
-    st.markdown("Nhập điểm từng mục; tổng 6–23. **Điểm thấp → nguy cơ cao**.")
+    st.header("Nguy cơ loét tỳ (Braden)")
+    st.markdown("Nhập điểm từng mục; tổng 6–23. **Điểm càng thấp → nguy cơ càng cao**.")
 
     braden_domains = {
-        "Cảm nhận (Sensory)": {1: "Hoàn toàn không phản ứng",2: "Phản ứng hạn chế",3:"Phản ứng hơi hạn chế",4:"Phản ứng đầy đủ"},
-        "Ẩm ướt (Moisture)": {1:"Da luôn ẩm",2:"Da thường xuyên ẩm",3:"Da đôi khi ẩm",4:"Da hiếm khi ẩm"},
+        "Nhận biết cảm giác (Sensory)": {1: "Hoàn toàn không phản ứng",2: "Phản ứng hạn chế",3:"Phản ứng hơi hạn chế",4:"Phản ứng đầy đủ"},
+        "Tình trạng da (Moisture)": {1:"Da luôn ẩm",2:"Da thường xuyên ẩm",3:"Da thỉnh thoảng ẩm",4:"Da hiếm khi ẩm"},
         "Hoạt động (Activity)": {1:"Hoàn toàn bất động",2:"Hạn chế vận động",3:"Di chuyển ít",4:"Hoạt động bình thường"},
         "Vận động (Mobility)": {1:"Không thể tự thay đổi tư thế",2:"Rất hạn chế",3:"Hạn chế vừa phải",4:"Bình thường"},
         "Dinh dưỡng (Nutrition)": {1:"Ăn rất ít hoặc không ăn",2:"Ăn kém",3:"Ăn đủ nhưng hạn chế",4:"Ăn bình thường"},
@@ -173,8 +171,10 @@ with tabs[3]:
 
     if vip_sub:
         vip_score = int(vip_choice[0])
-        if vip_score >= 2: vip_action = "Cân nhắc rút cannula và báo bác sĩ (VIP ≥ 2)."
-        elif vip_score == 1: vip_action = "Theo dõi chặt chẽ; kiểm tra thường xuyên."
+        
+        if vip_score >= 4: vip_action = "Thay đường truyền, căn nhắc sử dụng kháng sinh, cấy máu, ghi HSBA, điều trị."
+        elif vip_score >= 2: vip_action = "Cân nhắc rút cannula và báo bác sĩ (VIP ≥ 2)."
+        elif vip_score == 1: vip_action = "Theo dõi chặt chẽ; kiểm tra thường xuyên ít nhất 6 giờ/lần."
         else: vip_action = "Không có dấu hiệu viêm; tiếp tục theo dõi."
 
     st.subheader("Kết quả VIP")

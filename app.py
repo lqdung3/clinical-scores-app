@@ -177,7 +177,7 @@ with tabs[3]:
             ("1","1 — Đau nhẹ hoặc đỏ gần IV(Viêm sớm)"),
             ("2","2 — Có 2 dấu hiệu: Đau, đỏ, sưng (viêm sớm)"),
             ("3","3 — Tất cả dấu hiệu: Đau, đỏ, sưng, sờ cứng quanh chân kim (Trung bình)"),
-            ("4","4 — Tất cả dấu hiệu: Đau, đỏ, sưng, sờ cứng quanh chân kim, tĩnh mạch thành dây(Trung bình)")
+            ("4","4 — Tất cả dấu hiệu: Đau, đỏ, sưng, sờ cứng quanh chân kim, tĩnh mạch thành dây(Trung bình)"),
             ("5","5 — Tất cả dấu hiệu + sốt")
         ], format_func=lambda x: x[1])
         vip_sub = st.form_submit_button("Tính VIP")

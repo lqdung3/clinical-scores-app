@@ -9,7 +9,7 @@ import streamlit as st
 # ----------------------------
 st.set_page_config(page_title="Công cụ đánh giá cho điều dưỡng", layout="wide")
 st.title("Công cụ đánh giá cho điều dưỡng")
-st.markdown("Công cụ này chỉ **tính toán và hiển thị kết quả**, không lưu dữ liệu. Sử dụng nhanh tại giường được xây dựng bởi **TS.ĐD Lê Quốc Dũng** Khoa Điều dưỡng  - KTYH, Trường Cao đẳng Y tế Đồng Tháp.")
+st.markdown("Công cụ này chỉ **tính toán và hiển thị kết quả**, không lưu dữ liệu. Sử dụng nhanh tại giường được xây dựng bởi **TS.ĐD Lê Quốc Dũng**, Khoa Điều dưỡng  - KTYH, Trường Cao đẳng Y tế Đồng Tháp.")
 
 st.sidebar.header("Tùy chọn")
 show_details = st.sidebar.checkbox("Hiện chi tiết từng tiêu chí", value=True)

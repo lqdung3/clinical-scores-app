@@ -173,7 +173,7 @@ with tabs[3]:
         vip_score = int(vip_choice[0])
         
         if vip_score >= 4: vip_action = "Thay đường truyền, căn nhắc sử dụng kháng sinh, cấy máu, ghi HSBA, điều trị."
-        elif vip_score >= 2: vip_action = "Cân nhắc rút cannula và báo bác sĩ (VIP ≥ 2)."
+        elif vip_score >= 2: vip_action = "Thay đường truyền, ghi HSBA, căn nhắc điều trị (VIP ≥ 2)."
         elif vip_score == 1: vip_action = "Theo dõi chặt chẽ; kiểm tra thường xuyên ít nhất 6 giờ/lần."
         else: vip_action = "Không có dấu hiệu viêm; tiếp tục theo dõi."
 
@@ -191,4 +191,4 @@ st.write(f"- GCS: {gcs_total} → **{gcs_category}**")
 st.write(f"- Braden: {braden_total} → **{braden_risk}**")
 st.write(f"- VIP: {vip_score} → {vip_action}")
 
-st.info("Lưu ý: Ứng dụng này chỉ **tính và hiển thị kết quả** dựa trên tiêu chuẩn. Tuân thủ hướng dẫn và chính sách cơ sở y tế.")
+st.info("Lưu ý: Ứng dụng này chỉ **tính và hiển thị kết quả** dựa trên tiêu chuẩn. Tuân thủ hướng dẫn và chính sách Cơ sở Y tế.")

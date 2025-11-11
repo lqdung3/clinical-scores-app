@@ -1,5 +1,5 @@
 # app.py
-# Streamlit app: Morse + GCS + Braden + VIP (hoàn chỉnh, giao diện đẹp, tiếng Việt)
+# Streamlit app: Morse + GCS + Braden + VIP (giao diện trực quan, có màu sắc)
 # Chạy: pip install streamlit && streamlit run app.py
 
 import streamlit as st
@@ -9,7 +9,8 @@ import streamlit as st
 # ----------------------------
 st.set_page_config(page_title="Công cụ đánh giá cho điều dưỡng", layout="wide")
 st.title("Công cụ đánh giá cho điều dưỡng")
-st.markdown("Công cụ này chỉ **tính toán và hiển thị kết quả**, không lưu dữ liệu. Sử dụng nhanh tại giường được xây dựng bởi **TS.ĐD Lê Quốc Dũng**, Khoa Điều dưỡng  - KTYH, Trường Cao đẳng Y tế Đồng Tháp.")
+st.markdown("Công cụ này chỉ **tính toán và hiển thị kết quả**, không lưu dữ liệu. \
+             Sử dụng nhanh tại giường được xây dựng bởi **TS.ĐD Lê Quốc Dũng**, Khoa Điều dưỡng - KTYH, Trường Cao đẳng Y tế Đồng Tháp.")
 
 st.sidebar.header("Tùy chọn")
 show_details = st.sidebar.checkbox("Hiện chi tiết từng tiêu chí", value=True)
@@ -19,7 +20,7 @@ st.sidebar.caption("Phiên bản: 1.3 — Không lưu, không gửi dữ liệu.
 tabs = st.tabs(["Nguy cơ té ngã (Morse)", "Đánh giá hôn mê (Glasgow)", "Nguy cơ loét tỳ (Braden)", "Viêm tĩnh mạch (VIP)"])
 
 # ----------------------------
-# Khởi tạo mặc định các biến tránh NameError
+# Khởi tạo mặc định các biến
 morse_score = 0
 morse_risk = "Chưa tính"
 morse_details = []
@@ -37,7 +38,6 @@ vip_action = "Chưa tính"
 
 # ----------------------------
 # 1) Morse Fall Scale
-# ----------------------------
 with tabs[0]:
     st.header("Nguy cơ té ngã (Morse)")
     st.markdown("Chọn các mục phù hợp với người bệnh:")
@@ -46,7 +46,7 @@ with tabs[0]:
         col1, col2 = st.columns(2)
         with col1:
             morse_q1 = st.radio("1. Tiền sử té ngã", ("Không", "Có — té ngã trong 3 tháng"))
-            morse_q2 = st.radio("2. Chẩn đoán phụ (≥2 bệnh?)hoặc dùng thuốc hạ HA, gây nghiện", ("Không", "Có"))
+            morse_q2 = st.radio("2. Chẩn đoán phụ (≥2 bệnh?) hoặc dùng thuốc hạ HA, gây nghiện", ("Không", "Có"))
             morse_q3 = st.selectbox("3. Dụng cụ hỗ trợ đi lại",
                                     ("Không / nằm nghỉ",
                                      "Xe lăn/ Nạng / gậy / khung tập đi",
@@ -87,7 +87,6 @@ with tabs[0]:
 
 # ----------------------------
 # 2) Glasgow Coma Scale (GCS)
-# ----------------------------
 with tabs[1]:
     st.header("Đánh giá hôn mê (Glasgow)")
     st.markdown("Nhập điểm từng phần (E = Mở mắt, V = Lời nói, M = Vận động). Tổng 3–15.")
@@ -115,7 +114,6 @@ with tabs[1]:
 
 # ----------------------------
 # 3) Braden Scale
-# ----------------------------
 with tabs[2]:
     st.header("Nguy cơ loét tỳ (Braden)")
     st.markdown("Nhập điểm từng mục; tổng 6–23. **Điểm càng thấp → nguy cơ càng cao**.")
@@ -152,9 +150,8 @@ with tabs[2]:
 
 # ----------------------------
 # 4) VIP Score
-# ----------------------------
 with tabs[3]:
-    st.header("VIP Score (Viêm tiêm truyền)")
+    st.header("VIP Score (Viêm tĩnh mạch)")
     st.markdown("Đánh giá vị trí catheter/IV: điểm 0–5. VIP ≥2 → cân nhắc rút cannula.")
 
     with st.form("vip_form"):
@@ -171,10 +168,9 @@ with tabs[3]:
 
     if vip_sub:
         vip_score = int(vip_choice[0])
-        
-        if vip_score >= 4: vip_action = "Thay đường truyền, căn nhắc sử dụng kháng sinh, cấy máu, ghi HSBA, điều trị."
-        elif vip_score >= 2: vip_action = "Thay đường truyền, ghi HSBA, căn nhắc điều trị (VIP ≥ 2)."
-        elif vip_score == 1: vip_action = "Theo dõi chặt chẽ; kiểm tra thường xuyên ít nhất 6 giờ/lần."
+        if vip_score >= 4: vip_action = "Thay đường truyền, căn nhắc dùng kháng sinh, cấy máu, ghi HSBA, điều trị."
+        elif vip_score >= 2: vip_action = "Thay đường truyền, ghi HSBA, cân nhắc điều trị (VIP ≥ 2)."
+        elif vip_score == 1: vip_action = "Theo dõi chặt chẽ; kiểm tra ít nhất 6 giờ/lần."
         else: vip_action = "Không có dấu hiệu viêm; tiếp tục theo dõi."
 
     st.subheader("Kết quả VIP")
@@ -182,13 +178,44 @@ with tabs[3]:
     st.write(vip_action)
 
 # ----------------------------
-# Tóm tắt nhanh
-# ----------------------------
+# Tóm tắt nhanh trực quan
 st.markdown("---")
-st.header("Tóm tắt nhanh")
-st.write(f"- Morse: {morse_score} → **{morse_risk}**")
-st.write(f"- GCS: {gcs_total} → **{gcs_category}**")
-st.write(f"- Braden: {braden_total} → **{braden_risk}**")
-st.write(f"- VIP: {vip_score} → {vip_action}")
+st.header("Tóm tắt nhanh (trực quan)")
 
-st.info("Lưu ý: Ứng dụng này chỉ **tính và hiển thị kết quả** dựa trên tiêu chuẩn. Tuân thủ hướng dẫn và chính sách Cơ sở Y tế.")
+def color_label(text, level):
+    colors = {"high":"#ff4c4c", "medium":"#ffa500", "low":"#00cc44", "default":"#999999"}
+    return f"<span style='color:{colors.get(level,'#000')}; font-weight:bold'>{text}</span>"
+
+# Morse
+m_level = "default"
+if morse_submitted:
+    if "cao" in morse_risk.lower(): m_level="high"
+    elif "trung bình" in morse_risk.lower(): m_level="medium"
+    else: m_level="low"
+st.markdown(f"- Morse: {morse_score if morse_submitted else 0} → {color_label(morse_risk, m_level)}", unsafe_allow_html=True)
+
+# GCS
+g_level = "default"
+if gcs_sub:
+    if "rất sâu" in gcs_category.lower() or "nặng" in gcs_category.lower(): g_level="high"
+    elif "trung bình" in gcs_category.lower() or "nhẹ" in gcs_category.lower(): g_level="medium"
+    else: g_level="low"
+st.markdown(f"- GCS: {gcs_total if gcs_sub else 0} → {color_label(gcs_category, g_level)}", unsafe_allow_html=True)
+
+# Braden
+b_level = "default"
+if braden_sub:
+    if "cao" in braden_risk.lower(): b_level="high"
+    elif "trung bình" in braden_risk.lower(): b_level="medium"
+    else: b_level="low"
+st.markdown(f"- Braden: {braden_total if braden_sub else 0} → {color_label(braden_risk, b_level)}", unsafe_allow_html=True)
+
+# VIP
+v_level = "default"
+if vip_sub:
+    if vip_score >= 4: v_level="high"
+    elif vip_score >= 2: v_level="medium"
+    else: v_level="low"
+st.markdown(f"- VIP: {vip_score if vip_sub else 0} → {color_label(vip_action, v_level)}", unsafe_allow_html=True)
+
+st.info("Lưu ý: Ứng dụng này chỉ **tính và hiển thị kết quả** dựa trên tiêu chuẩn. Tuân thủ hướng dẫn và chính sách cơ sở y tế.")
